@@ -66,7 +66,7 @@ This is a sophisticated reimagining of Joseph Weizenbaum's legendary ELIZA chatb
 
 ---
 
-## 🏗️ Core Modules
+##  Core Modules
 
 ### **eliza.py** — Conversation Engine
 The heart of the system implementing:
@@ -75,11 +75,6 @@ The heart of the system implementing:
 - `SentimentAnalyzer`: Emotion detection (TextBlob)
 - `GPTFallback`: Intelligent unmatched input handling
 - `PersonalityManager`: Dynamic personality switching
-
-**Stats:**
-- ~650 lines of production code
-- Full type hints for maintainability
-- Memory-efficient conversation tracking
 
 ### **script.py** — Personality System
 Dataclass structures for personality definitions:
@@ -120,7 +115,7 @@ Matplotlib-based visualization:
 
 ---
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### Installation
 
@@ -139,38 +134,6 @@ matplotlib>=3.4.0
 pandas>=1.3.0
 textblob>=0.17.0
 ```
-
-### Quick Start (3 Options)
-
-#### **Option 1: Full Web Application** (Recommended)
-```bash
-python app.py
-# Open http://localhost:5000
-```
-Features: Chat + Analytics Dashboard + Real-time Visualizations
-
-#### **Option 2: Command-Line Interface**
-```bash
-# Default (Therapist personality)
-python eliza.py
-
-# With specific personality
-python eliza.py --personality child
-python eliza.py --personality mentor
-
-# Disable features
-python eliza.py --no-analytics --no-gpt
-```
-
-#### **Option 3: Standalone Analytics**
-```bash
-python analytics_dashboard.py
-# Open http://localhost:5000
-```
-Features: Statistics, Charts, Conversation History
-
----
-
 ## 💬 Personalities
 
 ### 👨‍⚕️ Psychotherapist
@@ -215,32 +178,8 @@ The web dashboard provides comprehensive insights:
 2. **Keyword Heatmap**: Top 15 most-used words by frequency
 3. **Mood Score**: Overall emotional state percentage
 4. **Conversation History**: Browse past interactions
-
-### Data Storage
-Analytics automatically saved to `analytics/` as JSON:
-```json
-{
-  "session_id": "session_20260226_140623",
-  "timestamp": "2026-02-26 14:06:23",
-  "duration": 125.45,
-  "messages": [
-    {
-      "text": "I'm feeling happy",
-      "sentiment": "positive",
-      "timestamp": 1.23
-    }
-  ],
-  "sentiment_distribution": {
-    "positive": 15,
-    "negative": 3,
-    "neutral": 8
-  }
-}
-```
-
----
-
-## 🔧 Advanced Usage
+   
+##  Advanced Usage
 
 ### Programmatic Integration
 
@@ -327,7 +266,7 @@ GPT Fallbacks: 5
 
 ---
 
-## 🎓 Design Patterns & Principles
+##  Design Patterns & Principles
 
 ### Object-Oriented Principles
 - **Encapsulation**: Analytics & sentiment analysis isolated
@@ -385,7 +324,7 @@ GPT Fallbacks: 5
 
 ---
 
-## 🧪 Testing
+##  Testing
 
 ### Test CLI Conversation
 
@@ -430,7 +369,7 @@ Eliza: Ah, the path of learning to code. This is a journey of logic and creativi
 
 ---
 
-## 📊 Performance & Metrics
+##  Performance & Metrics
 
 ### Benchmarks
 
@@ -450,7 +389,7 @@ Eliza: Ah, the path of learning to code. This is a journey of logic and creativi
 
 ---
 
-## 🔐 Security & Reliability
+##  Security & Reliability
 
 ### Error Handling
 - Graceful GPT fallback if model unavailable
@@ -496,7 +435,7 @@ Eliza: Ah, the path of learning to code. This is a journey of logic and creativi
 
 ---
 
-## 💡 Key Features Explained
+##  Key Features Explained
 
 ### Memory System
 Maintains 10-message context window:
@@ -528,95 +467,12 @@ Runtime personality changes:
 - Analytics continue across switch
 
 ---
-
-## 📚 Example Conversations
-
-### Therapist Conversation
-```
-User: I keep making the same mistakes
-Eliza: The same mistakes. When did you first notice this pattern?
-User: Since childhood I guess
-Eliza: Childhood experiences often shape our patterns. How do you feel about that?
-```
-
-### Child Conversation
-```
-User: I have to work today
-Eliza: Aww, you have to work? That's not fun! What kind of work do you do?
-User: I write code for my job
-Eliza: Code writing! That sounds complicated! Can you teach me?
-```
-
-### Mentor Conversation
-```
-User: I'm struggling with confidence
-Eliza: Confidence is built through repetition and self-compassion. What circumstances challenge your confidence most?
-User: Public speaking
-Eliza: Ah, speaking before many is a common teacher. What might you learn from this fear?
-```
-
----
-
-## 🚀 Deployment
+##  Deployment
 
 ### Local Development
 ```bash
 python app.py  # Starts on http://localhost:5000
 ```
-
-### Production Deployment
-
-Using Gunicorn:
-```bash
-pip install gunicorn
-gunicorn -w 4 -b 0.0.0.0:5000 app:app
-```
-
-Using Docker:
-```dockerfile
-FROM python:3.9
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-COPY src/ .
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "app:app"]
-```
-
----
-
-## 🐛 Troubleshooting
-
-### Issue: TextBlob not installed
-**Solution:** 
-```bash
-pip install textblob
-```
-
-### Issue: Flask already in use
-**Solution:**
-```bash
-python app.py --port 5001
-```
-
-### Issue: Scripts directory not found
-**Solution:**
-```bash
-# Ensure running from correct directory
-cd src
-python eliza.py
-```
-
-### Issue: Analytics not saving
-**Solution:**
-```bash
-# Ensure analytics/ directory exists
-mkdir -p analytics
-python app.py
-```
-
----
-
-## 📖 Learning Resources
 
 ### Understanding ELIZA
 - Original Paper: Weizenbaum, J. (1966). ELIZA—A Computer Program for the Study of Natural Language Communication
@@ -632,35 +488,7 @@ python app.py
 - Flask Documentation: https://flask.palletsprojects.com/
 - Matplotlib for Web: https://matplotlib.org/stable/gallery/user_interfaces/web_application_servers/index.html
 
----
-
-## 📝 License
-
-This project is provided under the MIT License.
-
-```
-MIT License
-
-Copyright (c) 2026 Donna (CS5001 P1)
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files...
-```
-
----
-
-## ✨ Credits
-
-- **Original ELIZA**: Joseph Weizenbaum (1966)
-- **Enhancement & Modern Implementation**: Donna (2026)
-- **Course**: CS5001 — Object-Oriented Modelling, Design and Programming
-- **Institution**: University of St Andrews
-
----
-
-## 🤝 Contributing
-
-Suggestions for enhancement:
+## Future enhancement:
 - Additional personality scripts
 - Advanced NLP techniques (spaCy, NLTK)
 - Database storage for analytics
@@ -669,25 +497,13 @@ Suggestions for enhancement:
 - Real-time speech interface
 - Mobile app version
 
----
-
-## 📞 Support & Contact
-
-For issues or questions:
-1. Check existing conversations in `sample_dialogues/`
-2. Review analytics at `analytics/` directory
-3. Test with `test_conversation.py`
-4. Refer to `report/report.pdf` for detailed documentation
-
----
-
 ## 🎉 Final Thoughts
 
 > "The machine may imitate the analyst, but the relationship is not the same." — Joseph Weizenbaum
 
 This modern implementation of ELIZA demonstrates how a simple pattern-matching system can create surprisingly engaging conversations. By adding sentiment analysis, personality switching, and comprehensive analytics, we've created a tool that's both educational and entertaining.
 
-**Explore the depths of conversation. Talk to ELIZA.** 🧠
+**Explore the depths of conversation. Talk to my ELIZA.** 🧠
 
 ---
 
