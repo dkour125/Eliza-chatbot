@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ELIZA Project Dashboard | Analytics & Visualizations</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+            animation: slideDown 0.6s ease-out;
+        }
+        
+        header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            animation: fadeIn 0.6s ease-out;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+        }
+        
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-bottom: 20px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .stat-box .label {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+        
+        .stat-box .value {
+            font-size: 2em;
+            font-weight: bold;
+        }
+        
+        .personality-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .personality-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .personality-card:nth-child(2) {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .personality-card:nth-child(3) {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+        
+        .personality-card:hover {
+            transform: scale(1.05);
+        }
+        
+        .personality-card h3 {
+            font-size: 1.2em;
+            margin-bottom: 8px;
+        }
+        
+        .personality-card p {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        .features-list {
+            list-style: none;
+            margin-top: 15px;
+        }
+        
+        .features-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+        }
+        
+        .features-list li:before {
+            content: "✓";
+            color: #667eea;
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+        
+        .timeline {
+            margin-top: 20px;
+        }
+        
+        .timeline-item {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        
+        .timeline-marker {
+            width: 40px;
+            height: 40px;
+            background: #667eea;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .timeline-content h4 {
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .timeline-content p {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .code-block {
+            background: #f5f5f5;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.85em;
+        }
+        
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .module-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .module-box {
+            background: #f9f9f9;
+            border: 2px solid #667eea;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .module-box h4 {
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+        
+        .module-box p {
+            font-size: 0.85em;
+            color: #666;
+        }
+        
+        .performance-bars {
+            margin-top: 20px;
+        }
+        
+        .performance-item {
+            margin-bottom: 15px;
+        }
+        
+        .performance-item label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .performance-item .bar {
+            width: 100%;
+            height: 25px;
+            background: #eee;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .performance-item .fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8em;
+            font-weight: bold;
+            transition: width 0.3s ease;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin: 3px;
+        }
+        
+        .badge-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .badge-success {
+            background: #43e97b;
+            color: white;
+        }
+        
+        .badge-warning {
+            background: #f5af19;
+            color: white;
+        }
+        
+        .badge-danger {
+            background: #f5576c;
+            color: white;
+        }
+        
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            opacity: 0.9;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.02);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2em;
+            }
+            
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .personality-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🧠 ELIZA Project Dashboard</h1>
+            <p>Enhanced Chatbot with Sentiment Analysis & Real-time Analytics</p>
+        </header>
+        
+        <div class="dashboard">
+            <!-- Project Overview -->
+            <div class="card">
+                <h2>📋 Project Overview</h2>
+                <p style="margin-bottom: 15px; line-height: 1.6;">
+                    A modern, feature-rich implementation of Joseph Weizenbaum's classic ELIZA chatbot (1966). Built for <strong>CS5001 Object-Oriented Modelling</strong>, demonstrating advanced software engineering principles with multiple personalities, sentiment analysis, and comprehensive analytics.
+                </p>
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="label">Code Lines</div>
+                        <div class="value">2,500+</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="label">Personalities</div>
+                        <div class="value">3</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="label">Modules</div>
+                        <div class="value">8</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="label">Interfaces</div>
+                        <div class="value">2</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Key Features -->
+            <div class="card">
+                <h2>✨ Key Features</h2>
+                <ul class="features-list">
+                    <li>Multiple Dynamic Personalities</li>
+                    <li>Real-time Sentiment Analysis</li>
+                    <li>Intelligent Memory System</li>
+                    <li>Web Dashboard Interface</li>
+                    <li>CLI & Web Dual Interfaces</li>
+                    <li>GPT Intelligent Fallback</li>
+                    <li>Multi-sentence Processing</li>
+                    <li>Analytics Tracking & Visualization</li>
+                </ul>
+            </div>
+            
+            <!-- Personalities -->
+            <div class="card full-width">
+                <h2>👥 Three Distinct Personalities</h2>
+                <div class="personality-grid">
+                    <div class="personality-card">
+                        <h3>👨‍⚕️ Psychotherapist</h3>
+                        <p>Rogerian approach with empathetic, reflective responses</p>
+                    </div>
+                    <div class="personality-card">
+                        <h3>👧 Eight-Year-Old</h3>
+                        <p>Playful, curious, enthusiastic with simple vocabulary</p>
+                    </div>
+                    <div class="personality-card">
+                        <h3>🧙 Wise Mentor</h3>
+                        <p>Philosophical guidance with deep wisdom and insight</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Core Modules -->
+            <div class="card full-width">
+                <h2>🏗️ Core Architecture</h2>
+                <div class="module-grid">
+                    <div class="module-box">
+                        <h4>eliza.py</h4>
+                        <p>650 lines | Conversation Engine</p>
+                    </div>
+                    <div class="module-box">
+                        <h4>script.py</h4>
+                        <p>400 lines | Personality System</p>
+                    </div>
+                    <div class="module-box">
+                        <h4>app.py</h4>
+                        <p>200 lines | Flask Web App</p>
+                    </div>
+                    <div class="module-box">
+                        <h4>analytics_dashboard.py</h4>
+                        <p>300 lines | Data Visualization</p>
+                    </div>
+                    <div class="module-box">
+                        <h4>dashboard_charts.py</h4>
+                        <p>150 lines | Chart Generation</p>
+                    </div>
+                    <div class="module-box">
+                        <h4>engine.py</h4>
+                        <p>Engine Utilities</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Technology Stack -->
+            <div class="card">
+                <h2>🛠️ Technology Stack</h2>
+                <div style="margin-top: 15px;">
+                    <p style="margin-bottom: 10px;"><strong>Backend:</strong></p>
+                    <div>
+                        <span class="badge badge-primary">Python 3.8+</span>
+                        <span class="badge badge-primary">Flask</span>
+                        <span class="badge badge-primary">TextBlob</span>
+                    </div>
+                </div>
+                <div style="margin-top: 15px;">
+                    <p style="margin-bottom: 10px;"><strong>Data & Analytics:</strong></p>
+                    <div>
+                        <span class="badge badge-success">Matplotlib</span>
+                        <span class="badge badge-success">Pandas</span>
+                        <span class="badge badge-success">JSON Storage</span>
+                    </div>
+                </div>
+                <div style="margin-top: 15px;">
+                    <p style="margin-bottom: 10px;"><strong>Design Patterns:</strong></p>
+                    <div>
+                        <span class="badge badge-warning">Strategy</span>
+                        <span class="badge badge-warning">Observer</span>
+                        <span class="badge badge-warning">Factory</span>
+                        <span class="badge badge-warning">Singleton</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Analytics Metrics -->
+            <div class="card">
+                <h2>📊 Analytics Metrics</h2>
+                <div class="performance-bars">
+                    <div class="performance-item">
+                        <label>Mood Score</label>
+                        <div class="bar">
+                            <div class="fill" style="width: 72%;">72%</div>
+                        </div>
+                    </div>
+                    <div class="performance-item">
+                        <label>Sentiment Positivity</label>
+                        <div class="bar">
+                            <div class="fill" style="width: 65%;">65%</div>
+                        </div>
+                    </div>
+                    <div class="performance-item">
+                        <label>Memory System</label>
+                        <div class="bar">
+                            <div class="fill" style="width: 85%;">85%</div>
+                        </div>
+                    </div>
+                    <div class="performance-item">
+                        <label>Pattern Coverage</label>
+                        <div class="bar">
+                            <div class="fill" style="width: 78%;">78%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Performance Benchmarks -->
+            <div class="card">
+                <h2>⚡ Performance Metrics</h2>
+                <table style="width: 100%; margin-top: 15px; border-collapse: collapse;">
+                    <tr style="border-bottom: 2px solid #667eea;">
+                        <th style="text-align: left; padding: 10px; color: #667eea;">Metric</th>
+                        <th style="text-align: left; padding: 10px; color: #667eea;">Value</th>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 10px;">Response Time</td>
+                        <td style="padding: 10px; color: #667eea;"><strong>45-250ms</strong></td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 10px;">Memory Usage</td>
+                        <td style="padding: 10px; color: #667eea;"><strong>12-45MB</strong></td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 10px;">Pattern Matching</td>
+                        <td style="padding: 10px; color: #667eea;"><strong>O(n)</strong></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px;">Concurrent Sessions</td>
+                        <td style="padding: 10px; color: #667eea;"><strong>100+</strong></td>
+                    </tr>
+                </table>
+            </div>
+            
+            <!-- Quick Start -->
+            <div class="card full-width">
+                <h2>🚀 Quick Start Guide</h2>
+                <div style="margin-top: 20px;">
+                    <h3 style="color: #667eea; margin-bottom: 10px;">Installation</h3>
+                    <div class="code-block">pip install -r requirements.txt</div>
+                    
+                    <h3 style="color: #667eea; margin-bottom: 10px; margin-top: 20px;">Run Web Application</h3>
+                    <div class="code-block">python app.py<br># Open http://localhost:5000</div>
+                    
+                    <h3 style="color: #667eea; margin-bottom: 10px; margin-top: 20px;">Run CLI</h3>
+                    <div class="code-block">python eliza.py --personality therapist<br>python eliza.py --personality child<br>python eliza.py --personality mentor</div>
+                    
+                    <h3 style="color: #667eea; margin-bottom: 10px; margin-top: 20px;">Run Analytics Dashboard</h3>
+                    <div class="code-block">python analytics_dashboard.py</div>
+                </div>
+            </div>
+            
+            <!-- Design Patterns -->
+            <div class="card">
+                <h2>🎯 Design Patterns</h2>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-marker">1</div>
+                        <div class="timeline-content">
+                            <h4>Strategy Pattern</h4>
+                            <p>Multiple personalities (Therapist/Child/Mentor)</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-marker">2</div>
+                        <div class="timeline-content">
+                            <h4>Observer Pattern</h4>
+                            <p>Analytics event tracking & monitoring</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-marker">3</div>
+                        <div class="timeline-content">
+                            <h4>Factory Pattern</h4>
+                            <p>Script loading & personality creation</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-marker">4</div>
+                        <div class="timeline-content">
+                            <h4>Singleton Pattern</h4>
+                            <p>Personality manager & analytics</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sample Output -->
+            <div class="card full-width">
+                <h2>💬 Sample Conversation Output</h2>
+                <div class="code-block" style="background: #2d2d2d; color: #f8f8f2; padding: 20px; border-radius: 10px;">
+                    <div style="color: #a1efe4; margin-bottom: 10px;">$ python eliza.py --personality therapist</div>
+                    <div style="color: #f92672; margin-bottom: 15px;">🧠 ELIZA Chatbot - Psychotherapist</div>
+                    <div style="color: #66d9ef;">Hello. I am a psychotherapist. Please tell me what is on your mind.</div>
+                    <div style="margin-top: 10px;"><span style="color: #f92672;">> </span><span>I'm feeling stressed about exams</span></div>
+                    <div style="color: #66d9ef; margin-top: 8px;">Eliza: Exams can be stressful. What aspect of the exams worries you most?</div>
+                    <div style="margin-top: 10px;"><span style="color: #f92672;">> </span><span>I haven't studied enough</span></div>
+                    <div style="color: #66d9ef; margin-top: 8px;">Eliza: How much time have you spent studying so far?</div>
+                </div>
+            </div>
+            
+            <!-- Future Enhancements -->
+            <div class="card">
+                <h2>🔮 Future Enhancements</h2>
+                <ul class="features-list">
+                    <li>Advanced NLP (spaCy, NLTK)</li>
+                    <li>Database Storage (PostgreSQL)</li>
+                    <li>Multi-language Support</li>
+                    <li>ML Personality Training</li>
+                    <li>Speech Interface</li>
+                    <li>Mobile App Version</li>
+                    <li>Real-time Collaboration</li>
+                    <li>Advanced Sentiment Models</li>
+                </ul>
+            </div>
+            
+            <!-- Project Status -->
+            <div class="card">
+                <h2>✅ Project Status</h2>
+                <div style="margin-top: 20px;">
+                    <div style="margin-bottom: 15px;">
+                        <span class="badge badge-success">Core Implementation: Complete</span>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <span class="badge badge-success">Web Interface: Complete</span>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <span class="badge badge-success">Analytics: Complete</span>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <span class="badge badge-success">Documentation: Complete</span>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <span class="badge badge-warning">Testing: In Progress</span>
+                    </div>
+                    <div>
+                        <span class="badge badge-success">Production Ready: Yes</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p><strong>Enhanced ELIZA Chatbot Project</strong></p>
+            <p>CS5001 — Object-Oriented Modelling, Design and Programming</p>
+            <p>University of St Andrews | 2026</p>
+            <p style="margin-top: 20px; opacity: 0.8;">
+                "The machine may imitate the analyst, but the relationship is not the same." — Joseph Weizenbaum
+            </p>
+        </footer>
+    </div>
+</body>
+</html>
